@@ -1,38 +1,37 @@
 package com.project.todo_app;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
+import org.assertj.swing.fixture.FrameFixture;
+import org.junit.jupiter.api.*;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
+import javax.swing.*;
+
+public class AppTest {
+
+    private FrameFixture window;
+
+    @BeforeAll
+    static void setupOnce() {
+        FailOnThreadViolationRepaintManager.install();
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
+    @BeforeEach
+    void setUp() {
+        SwingUtilities.invokeLater(() -> App.main(null));
+        window = new FrameFixture(App.getCurrentFrame());
+        window.show();
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+    @AfterEach
+    void tearDown() {
+        window.cleanUp();
+    }
+
+    @Test
+    void testAddTodoItem() {
+        window.textBox().enterText("Write report");
+        window.button().click();
+        window.list().requireItemCount(1);
+        Assertions.assertEquals("Write report", window.list().valueAt(0));
     }
 }
