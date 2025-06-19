@@ -2,6 +2,7 @@ package com.project.todo_app;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Todo {
     private String description;
@@ -23,13 +24,26 @@ public class Todo {
 
     public void markDone() {
         this.done = true;
+        this.tags.add(new Tag("Done"));
     }
 
-    public void addTag(Tag tag) {
-        tags.add(tag);
+    public boolean addTag(Tag tag) {
+        return tags.add(tag);
+    }
+
+    public void removeTag(String tagName) {
+        tags.removeIf(tag -> tag.getName().equalsIgnoreCase(tagName));
     }
 
     public Set<Tag> getTags() {
         return tags;
+    }
+
+    public boolean hasTag(String tagName) {
+        return tags.stream().anyMatch(tag -> tag.getName().equalsIgnoreCase(tagName));
+    }
+
+    public String getTagsAsString() {
+        return tags.stream().map(Tag::getName).collect(Collectors.joining(", "));
     }
 }
