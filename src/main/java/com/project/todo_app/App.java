@@ -106,7 +106,7 @@ public class App {
 
             public void insertUpdate(DocumentEvent e) { update(); }
             public void removeUpdate(DocumentEvent e) { update(); }
-            public void changedUpdate(DocumentEvent e) { update(); }
+            public void changedUpdate(DocumentEvent e) {}
         });
 
         frame.getContentPane().add(panel);
@@ -203,6 +203,7 @@ public class App {
         ButtonGroup group = new ButtonGroup();
 
         JRadioButton allBtn = new JRadioButton("All");
+        allBtn.setName("radioTag_All");
         allBtn.setSelected("All".equals(currentFilterTag));
         allBtn.addActionListener(e -> {
             currentFilterTag = "All";
@@ -213,6 +214,7 @@ public class App {
         tagPanel.add(allBtn);
 
         JRadioButton doneBtn = new JRadioButton("Done");
+        doneBtn.setName("radioTag_Done");
         doneBtn.setSelected("Done".equals(currentFilterTag));
         doneBtn.addActionListener(e -> {
             currentFilterTag = "Done";

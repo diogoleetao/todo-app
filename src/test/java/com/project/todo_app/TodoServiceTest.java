@@ -46,6 +46,12 @@ public class TodoServiceTest {
         TodoService service = new TodoService();
         assertThrows(IllegalArgumentException.class, () -> service.addTodo("   "));
     }
+    
+    @Test
+    void testAddTodoRejectsNull() {
+        TodoService service = new TodoService();
+        assertThrows(IllegalArgumentException.class, () -> service.addTodo(null));
+    }
 
     @Test
     void testAddDuplicateTodos() {
@@ -58,6 +64,16 @@ public class TodoServiceTest {
     void testMarkDoneOutOfBounds() {
         TodoService service = new TodoService();
         service.markDone(99); 
+    }
+    
+    @Test
+    void testFilterByAllReturnsEverything() {
+        TodoService service = new TodoService();
+        service.addTodo("a");
+        service.addTodo("b");
+        service.addTodo("c");
+        service.addTodo("d");
+        assertThat(service.getTodosFilteredByTag("All")).hasSize(4);
     }
     
     @Test
@@ -95,5 +111,11 @@ public class TodoServiceTest {
         var done = service.getTodosFilteredByTag("Done");
         assertThat(done).hasSize(1);
         assertThat(done.get(0).getDescription()).isEqualTo("B");
+    }
+    
+    @Test
+    void testAddTagToInvalidIndexReturnsFalse() {
+        TodoService service = new TodoService();
+        assertThat(service.addTagToTodo(5, new Tag("x"))).isFalse();
     }
 }

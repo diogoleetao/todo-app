@@ -25,4 +25,17 @@ public class TagTest {
         Tag tag2 = new Tag("fun");
         assertNotEquals(tag1, tag2);
     }
+    
+    @Test
+    void testEqualsHandlesNullAndWrongType() {
+        Tag tag = new Tag("tag");
+        assertNotEquals(tag, null);
+        assertNotEquals(tag, "notTag");
+    }
+    
+    @Test
+    void testEqualsWithSameObject() {
+        Tag tag = new Tag("repeat");
+        assertEquals(tag, tag);
+    }
 }
