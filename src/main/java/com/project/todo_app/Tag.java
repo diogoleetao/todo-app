@@ -1,12 +1,12 @@
 package com.project.todo_app;
 
-import java.util.Objects;
+//import java.util.Objects;
 
 public class Tag {
     private String name;
 
     public Tag(String name) {
-        this.name = name;
+        this.name = name.toLowerCase();
     }
 
     public String getName() {
@@ -18,11 +18,11 @@ public class Tag {
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
-        return Objects.equals(name, tag.name);
+        return name.equalsIgnoreCase(tag.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return name.toLowerCase().hashCode();
     }
 }

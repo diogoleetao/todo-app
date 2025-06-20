@@ -2,7 +2,6 @@ package com.project.todo_app;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-import java.util.Set;
 
 public class TodoTest {
 
@@ -24,34 +23,43 @@ public class TodoTest {
     @Test
     void testAddTag() {
         Todo todo = new Todo("Test with tag");
-        Tag tag = new Tag("school");
+        Tag tag = new Tag("new tag 1");
         todo.addTag(tag);
         assertTrue(todo.getTags().contains(tag));
+        assertFalse(todo.hasTag("wrong tag"));
+    }
+    
+    @Test
+    void testAddTagDuplicate() {
+    	Todo todo = new Todo("Test with tag");
+        Tag tag = new Tag("new tag 1");
+        assertTrue(todo.addTag(tag));
+        assertFalse(todo.addTag(tag));
     }
 
     @Test
     void testRemoveTag() {
-        Todo todo = new Todo("Clean room");
-        todo.addTag(new Tag("home"));
-        todo.removeTag("home");
-        assertFalse(todo.hasTag("home"));
+        Todo todo = new Todo("Task to remove Tag");
+        todo.addTag(new Tag("tag1"));
+        todo.removeTag("tag1");
+        assertFalse(todo.hasTag("tag1"));
     }
 
     @Test
     void testGetTagsAsString() {
         Todo todo = new Todo("Task");
-        todo.addTag(new Tag("one"));
-        todo.addTag(new Tag("two"));
+        todo.addTag(new Tag("tag1"));
+        todo.addTag(new Tag("tag2"));
         String result = todo.getTagsAsString();
-        assertTrue(result.contains("one"));
-        assertTrue(result.contains("two"));
+        assertTrue(result.contains("tag1"));
+        assertTrue(result.contains("tag2"));
     }
 
     @Test
     void testHasTag() {
-        Todo todo = new Todo("Do laundry");
-        todo.addTag(new Tag("chores"));
-        assertTrue(todo.hasTag("chores"));
-        assertFalse(todo.hasTag("fun"));
+        Todo todo = new Todo("Task with tag1");
+        todo.addTag(new Tag("tag1"));
+        assertTrue(todo.hasTag("tag1"));
+        assertFalse(todo.hasTag("tag2"));
     }
 }

@@ -49,15 +49,51 @@ public class TodoServiceTest {
 
     @Test
     void testAddDuplicateTodos() {
-        TodoService service = new TodoService();
-        service.addTodo("Buy milk");
-        service.addTodo("Buy milk");
-        assertThat(service.getAllTodos()).hasSize(2); 
+    	TodoService service = new TodoService();
+        assertThat(service.addTodo("DuplicateTask")).isTrue();
+        assertThat(service.addTodo("DuplicateTask")).isFalse();
     }
 
     @Test
     void testMarkDoneOutOfBounds() {
         TodoService service = new TodoService();
         service.markDone(99); 
+    }
+    
+    @Test
+    void testAddAndFilterByTag() {
+        TodoService service = new TodoService();
+        service.addTodo("Study");
+        service.addTagToTodo(0, new Tag("school"));
+
+        var filtered = service.getTodosFilteredByTag("school");
+        assertThat(filtered).hasSize(1);
+        assertThat(filtered.get(0).getDescription()).isEqualTo("Study");
+    }
+
+    @Test
+    void testRemoveTagFromAll() {
+        TodoService service = new TodoService();
+        service.addTodo("A");
+        service.addTodo("B");
+        service.addTagToTodo(0, new Tag("work"));
+        service.addTagToTodo(1, new Tag("work"));
+
+        service.removeTagFromAll("work");
+
+        assertThat(service.getAllTodos().get(0).getTags()).isEmpty();
+        assertThat(service.getAllTodos().get(1).getTags()).isEmpty();
+    }
+
+    @Test
+    void testDoneFilter() {
+        TodoService service = new TodoService();
+        service.addTodo("A");
+        service.addTodo("B");
+        service.markDone(1);
+
+        var done = service.getTodosFilteredByTag("Done");
+        assertThat(done).hasSize(1);
+        assertThat(done.get(0).getDescription()).isEqualTo("B");
     }
 }

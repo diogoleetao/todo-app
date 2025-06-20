@@ -6,20 +6,21 @@ import java.util.stream.Collectors;
 public class TodoService {
 
     private List<Todo> todos = new ArrayList<>();
+    private Set<String> globalTags = new HashSet<>();
 
     public boolean addTodo(String description) {
         if (description == null || description.trim().isEmpty()) {
             throw new IllegalArgumentException("Description must not be empty");
         }
         if (todos.stream().anyMatch(t -> t.getDescription().equalsIgnoreCase(description))) {
-            return false; // prevent duplicates
+            return false;
         }
         todos.add(new Todo(description));
         return true;
     }
 
     public List<Todo> getAllTodos() {
-        return new ArrayList<>(todos); // defensive copy
+        return new ArrayList<>(todos);
     }
 
     public List<Todo> getTodosFilteredByTag(String tagName) {
@@ -40,24 +41,32 @@ public class TodoService {
 
     public boolean addTagToTodo(int index, Tag tag) {
         if (index >= 0 && index < todos.size()) {
-            return todos.get(index).addTag(tag);
+            boolean added = todos.get(index).addTag(tag);
+            if (added) {
+                globalTags.add(tag.getName().toLowerCase());
+            }
+            return added;
         }
         return false;
+    }
+
+    public boolean addTagIfNew(String tagName) {
+        return globalTags.stream().noneMatch(existing -> existing.equalsIgnoreCase(tagName));
     }
 
     public void removeTagFromAll(String tagName) {
         for (Todo todo : todos) {
             todo.removeTag(tagName);
         }
+        globalTags.removeIf(existing -> existing.equalsIgnoreCase(tagName));
+    }
+
+    public Set<String> getAllTags() {
+        return new HashSet<>(globalTags);
     }
     
-    public Set<String> getAllTags() {
-        Set<String> allTags = new HashSet<>();
-        for (Todo todo : todos) {
-            for (Tag tag : todo.getTags()) {
-                allTags.add(tag.getName());
-            }
-        }
-        return allTags;
+    public void reset() {
+        todos.clear();
+        globalTags.clear();
     }
 }

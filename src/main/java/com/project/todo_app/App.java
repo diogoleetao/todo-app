@@ -5,10 +5,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
-import javax.swing.Timer;
-
 
 public class App {
     private static JFrame frame;
@@ -20,6 +17,9 @@ public class App {
     private static int tagTargetIndex = -1;
     private static String currentFilterTag = "All";
     private static JButton deleteTagButton;
+
+    private static JPanel taskListPanel;
+    private static JButton currentTagButtonShown = null;
 
     public static JFrame getCurrentFrame() {
         return frame;
@@ -37,20 +37,25 @@ public class App {
         JPanel panel = new JPanel(new BorderLayout());
 
         inputField = new JTextField();
+        inputField.setName("inputField");
+
         actionButton = new JButton("Add Task");
+        actionButton.setName("actionButton");
         actionButton.setEnabled(false);
 
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(actionButton, BorderLayout.EAST);
 
-        JPanel taskListPanel = new JPanel();
+        taskListPanel = new JPanel();
+        taskListPanel.setName("taskListPanel");
         taskListPanel.setLayout(new BoxLayout(taskListPanel, BoxLayout.Y_AXIS));
         JScrollPane scrollPane = new JScrollPane(taskListPanel);
 
         tagPanel = new JPanel();
+        tagPanel.setName("tagPanel");
         tagPanel.setLayout(new BoxLayout(tagPanel, BoxLayout.Y_AXIS));
-        updateTagPanel(taskListPanel);
+        updateTagPanel();
 
         panel.add(inputPanel, BorderLayout.NORTH);
         panel.add(scrollPane, BorderLayout.CENTER);
@@ -61,22 +66,33 @@ public class App {
             if (text.isEmpty()) return;
 
             if (isTagMode) {
-                boolean success = todoService.addTagToTodo(tagTargetIndex, new Tag(text));
+                boolean success = todoService.addTagIfNew(text);
                 if (!success) {
-                    showError("This tag already exists for the task.");
+                    JOptionPane.showMessageDialog(frame, "Tag already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+                    isTagMode = false;
+                    actionButton.setText("Add Task");
+                    inputField.setText("");
+                    actionButton.setEnabled(false);
+                    return;
+                }
+                if (tagTargetIndex != -1) {
+                    todoService.addTagToTodo(tagTargetIndex, new Tag(text));
+                    updateTodoList();
                 }
                 isTagMode = false;
-                tagTargetIndex = -1;
                 actionButton.setText("Add Task");
-                updateTodoList(taskListPanel);
-                updateTagPanel(taskListPanel);
+                updateTagPanel();
             } else {
                 boolean success = todoService.addTodo(text);
                 if (!success) {
-                    showError("Task already exists.");
+                    JOptionPane.showMessageDialog(frame, "Task already exists.", "Error", JOptionPane.ERROR_MESSAGE);
+                    inputField.setText("");
+                    actionButton.setEnabled(false);
+                    return;
                 }
-                updateTodoList(taskListPanel);
-                updateTagPanel(taskListPanel);
+                isTagMode = false;
+                updateTodoList();
+                updateTagPanel();
             }
 
             inputField.setText("");
@@ -87,6 +103,7 @@ public class App {
             void update() {
                 actionButton.setEnabled(!inputField.getText().trim().isEmpty());
             }
+
             public void insertUpdate(DocumentEvent e) { update(); }
             public void removeUpdate(DocumentEvent e) { update(); }
             public void changedUpdate(DocumentEvent e) { update(); }
@@ -95,12 +112,15 @@ public class App {
         frame.getContentPane().add(panel);
         frame.setVisible(true);
     }
-
-    private static void showError(String msg) {
-        JOptionPane.showMessageDialog(frame, msg, "Error", JOptionPane.ERROR_MESSAGE);
+    
+    public static void resetAppState() {
+        todoService.reset();
+        currentFilterTag = "All";
+        updateTodoList();
+        updateTagPanel();
     }
-
-    private static void updateTodoList(JPanel taskListPanel) {
+    
+    private static void updateTodoList() {
         taskListPanel.removeAll();
         List<Todo> todos = "All".equals(currentFilterTag)
                 ? todoService.getAllTodos()
@@ -110,13 +130,16 @@ public class App {
             Todo todo = todos.get(i);
 
             JPanel taskPanel = new JPanel(new BorderLayout());
+            taskPanel.setName("taskPanel-" + i);
             taskPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+            taskPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
             JLabel label = new JLabel(todo.getDescription()
                     + (todo.isDone() ? " ✔" : "")
                     + (!todo.getTags().isEmpty() ? " [" + todo.getTagsAsString() + "]" : ""));
 
             JButton tagBtn = new JButton("Tags");
+            tagBtn.setName("taskTagButton-" + i);
             tagBtn.setVisible(false);
 
             final int index = i;
@@ -125,6 +148,7 @@ public class App {
                 JPopupMenu menu = new JPopupMenu();
 
                 JMenuItem createNew = new JMenuItem("Create new tag");
+                createNew.setName("menuNewTag");
                 createNew.addActionListener(e -> {
                     isTagMode = true;
                     tagTargetIndex = index;
@@ -136,7 +160,7 @@ public class App {
                 JMenuItem markDone = new JMenuItem("Mark as Done");
                 markDone.addActionListener(e -> {
                     todoService.markDone(index);
-                    updateTodoList(taskListPanel);
+                    updateTodoList();
                 });
                 menu.add(markDone);
 
@@ -144,7 +168,7 @@ public class App {
                     JMenuItem tagItem = new JMenuItem(tag);
                     tagItem.addActionListener(e -> {
                         todoService.addTagToTodo(index, new Tag(tag));
-                        updateTodoList(taskListPanel);
+                        updateTodoList();
                     });
                     menu.add(tagItem);
                 }
@@ -156,14 +180,12 @@ public class App {
             taskPanel.add(tagBtn, BorderLayout.EAST);
 
             taskPanel.addMouseListener(new MouseAdapter() {
-                public void mouseEntered(MouseEvent e) {
+                public void mouseClicked(MouseEvent e) {
+                    if (currentTagButtonShown != null) {
+                        currentTagButtonShown.setVisible(false);
+                    }
                     tagBtn.setVisible(true);
-                }
-
-                public void mouseExited(MouseEvent e) {
-                    Timer timer = new Timer(100, evt -> tagBtn.setVisible(false));
-                    timer.setRepeats(false);
-                    timer.start();
+                    currentTagButtonShown = tagBtn;
                 }
             });
 
@@ -174,7 +196,7 @@ public class App {
         taskListPanel.repaint();
     }
 
-    private static void updateTagPanel(JPanel taskListPanel) {
+    private static void updateTagPanel() {
         tagPanel.removeAll();
         tagPanel.add(new JLabel("Tags"));
 
@@ -185,7 +207,7 @@ public class App {
         allBtn.addActionListener(e -> {
             currentFilterTag = "All";
             deleteTagButton.setEnabled(false);
-            updateTodoList(taskListPanel);
+            updateTodoList();
         });
         group.add(allBtn);
         tagPanel.add(allBtn);
@@ -195,7 +217,7 @@ public class App {
         doneBtn.addActionListener(e -> {
             currentFilterTag = "Done";
             deleteTagButton.setEnabled(false);
-            updateTodoList(taskListPanel);
+            updateTodoList();
         });
         group.add(doneBtn);
         tagPanel.add(doneBtn);
@@ -205,25 +227,28 @@ public class App {
 
             JRadioButton tagBtn = new JRadioButton(tag);
             tagBtn.setSelected(tag.equals(currentFilterTag));
+            tagBtn.setName("radioTag_" + tag);
             tagBtn.addActionListener(e -> {
                 currentFilterTag = tag;
                 deleteTagButton.setEnabled(true);
-                updateTodoList(taskListPanel);
+                updateTodoList();
             });
             group.add(tagBtn);
             tagPanel.add(tagBtn);
         }
 
         deleteTagButton = new JButton("Remove Tag");
+        deleteTagButton.setName("deleteTagButton");
         deleteTagButton.setEnabled(false);
         deleteTagButton.addActionListener(e -> {
             if (!"All".equals(currentFilterTag) && !"Done".equals(currentFilterTag)) {
                 todoService.removeTagFromAll(currentFilterTag);
                 currentFilterTag = "All";
-                updateTodoList(taskListPanel);
-                updateTagPanel(taskListPanel);
+                updateTodoList();
+                updateTagPanel();
             }
         });
+
         tagPanel.add(deleteTagButton);
 
         tagPanel.revalidate();
