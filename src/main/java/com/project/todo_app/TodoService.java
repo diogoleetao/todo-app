@@ -1,7 +1,6 @@
 package com.project.todo_app;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TodoService {
 
@@ -26,9 +25,9 @@ public class TodoService {
 	public List<Todo> getTodosFilteredByTag(String tagName) {
 		if (tagName.equals("All")) return getAllTodos();
 		if (tagName.equals("Done")) {
-			return todos.stream().filter(Todo::isDone).collect(Collectors.toList());
+			return todos.stream().filter(Todo::isDone).toList();
 		}
-		return todos.stream().filter(todo -> todo.hasTag(tagName)).collect(Collectors.toList());
+		return todos.stream().filter(todo -> todo.hasTag(tagName)).toList();	
 	}
 
 	public void markDone(int index) {

@@ -1,7 +1,5 @@
 package com.project.todo_app;
 
-//import java.util.Objects;
-
 public class Tag {
 	private String name;
 

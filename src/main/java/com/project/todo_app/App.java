@@ -20,7 +20,8 @@ public class App {
 
 	private static JPanel taskListPanel;
 	private static JButton currentTagButtonShown = null;
-
+	private static final String ADD_TASK_LABEL = "Add Task";
+	
 	public static JFrame getCurrentFrame() {
 		return frame;
 	}
@@ -31,7 +32,7 @@ public class App {
 
 	private static void createAndShowGUI() {
 		frame = new JFrame("Todo App");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setSize(600, 400);
 
 		JPanel panel = new JPanel(new BorderLayout());
@@ -39,7 +40,7 @@ public class App {
 		inputField = new JTextField();
 		inputField.setName("inputField");
 
-		actionButton = new JButton("Add Task");
+		actionButton = new JButton(ADD_TASK_LABEL);
 		actionButton.setName("actionButton");
 		actionButton.setEnabled(false);
 
@@ -70,7 +71,7 @@ public class App {
 				if (!success) {
 					JOptionPane.showMessageDialog(frame, "Tag already exists.", "Error", JOptionPane.ERROR_MESSAGE);
 					isTagMode = false;
-					actionButton.setText("Add Task");
+					actionButton.setText(ADD_TASK_LABEL);
 					inputField.setText("");
 					actionButton.setEnabled(false);
 					return;
@@ -80,7 +81,7 @@ public class App {
 					updateTodoList();
 				}
 				isTagMode = false;
-				actionButton.setText("Add Task");
+				actionButton.setText(ADD_TASK_LABEL);
 				updateTagPanel();
 			} else {
 				boolean success = todoService.addTodo(text);
@@ -106,7 +107,9 @@ public class App {
 
 			public void insertUpdate(DocumentEvent e) { update(); }
 			public void removeUpdate(DocumentEvent e) { update(); }
-			public void changedUpdate(DocumentEvent e) {}
+			public void changedUpdate(DocumentEvent e) {
+				throw new UnsupportedOperationException("Not supported for plain-text fields");
+			}
 		});
 
 		frame.getContentPane().add(panel);
@@ -179,6 +182,7 @@ public class App {
 			taskPanel.add(tagBtn, BorderLayout.EAST);
 
 			taskPanel.addMouseListener(new MouseAdapter() {
+				@Override
 				public void mouseClicked(MouseEvent e) {
 					if (currentTagButtonShown != null) {
 						currentTagButtonShown.setVisible(false);
@@ -222,7 +226,6 @@ public class App {
 		tagPanel.add(doneBtn);
 
 		for (String tag : todoService.getAllTags()) {
-			//if ("Done".equalsIgnoreCase(tag)) continue;
 
 			JRadioButton tagBtn = new JRadioButton(tag);
 			tagBtn.setSelected(tag.equals(currentFilterTag));

@@ -47,7 +47,7 @@ class AppTest {
 
 		JLabel label = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
 
-		await().atMost(2, TimeUnit.SECONDS).until(() -> label.isShowing());
+		await().atMost(2, TimeUnit.SECONDS).until(label::isShowing);
 		window.robot().click(label);
 
 		window.button("taskTagButton-0").click();
@@ -57,7 +57,6 @@ class AppTest {
 		window.button("actionButton").click();
 
 		JLabel updatelabel = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
-		await().atMost(2, TimeUnit.SECONDS).until(() -> updatelabel.isShowing());
 		window.robot().click(updatelabel);
 
 		window.button("taskTagButton-0").click();
@@ -193,7 +192,7 @@ class AppTest {
 		window.robot().click(label);
 
 		JButton tagButton = (JButton) taskPanel.getComponent(1);
-		await().atMost(1, TimeUnit.SECONDS).until(() -> tagButton.isVisible());
+		await().atMost(1, TimeUnit.SECONDS).until(tagButton::isVisible);
 
 		window.button("taskTagButton-" + lastIndex).click();
 		window.menuItem("menuNewTag").click();
