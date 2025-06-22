@@ -230,7 +230,7 @@ class TodoServiceTest {
 	}
 
 	@Test
-	void testDoneFilterCorrectSize() {
+	void testDoneFilter() {
 		TodoService service = new TodoService();
 		service.addTodo("A");
 		service.addTodo("B");
@@ -244,6 +244,22 @@ class TodoServiceTest {
 
 		var done = service.getTodosFilteredByTag("Done");
 		assertThat(done).allSatisfy(todo -> assertThat(todo.isDone()).isTrue());
+	}
+	
+	@Test
+	void testDoneFilterCorrectSize() {
+		TodoService service = new TodoService();
+		service.addTodo("A");
+		service.addTodo("B");
+		service.addTodo("C");
+		service.markDone(1);
+		service.markDone(2);
+
+		assertThat(service.getAllTodos().get(0).isDone()).isFalse();
+		assertThat(service.getAllTodos().get(1).isDone()).isTrue();
+		assertThat(service.getAllTodos().get(2).isDone()).isTrue();
+
+		var done = service.getTodosFilteredByTag("Done");
 		assertThat(done).hasSize(2);
 	}
 	
@@ -261,7 +277,6 @@ class TodoServiceTest {
 		assertThat(service.getAllTodos().get(2).isDone()).isTrue();
 
 		var done = service.getTodosFilteredByTag("Done");
-		assertThat(done).allSatisfy(todo -> assertThat(todo.isDone()).isTrue());
 		assertThat(done).extracting(Todo::getDescription).containsExactlyInAnyOrder("B", "C");
 	}
 
