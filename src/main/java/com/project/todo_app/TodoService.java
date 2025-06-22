@@ -38,10 +38,14 @@ public class TodoService {
 	}
 
 	public boolean addTagToTodo(int index, Tag tag) {
+		String normalized = tag.getName().toLowerCase();
+		if (normalized.equals("done") || normalized.equals("all")) {
+			return false;
+		}
 		if (index >= 0 && index < todos.size()) {
 			boolean added = todos.get(index).addTag(tag);
 			if (added) {
-				globalTags.add(tag.getName().toLowerCase());
+				globalTags.add(normalized);
 			}
 			return added;
 		}
@@ -49,6 +53,10 @@ public class TodoService {
 	}
 
 	public boolean addTagIfNew(String tagName) {
+		String normalized = tagName.toLowerCase();
+		if (normalized.equals("done") || normalized.equals("all")) {
+			return false;
+		}
 		return globalTags.stream().noneMatch(existing -> existing.equalsIgnoreCase(tagName));
 	}
 

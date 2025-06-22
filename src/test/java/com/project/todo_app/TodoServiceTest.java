@@ -92,6 +92,21 @@ public class TodoServiceTest {
 		assertThat(service.addTagToTodo(0, tag)).isTrue();
 		assertThat(service.addTagToTodo(0, tag)).isFalse();
 	}
+	
+	@Test
+	void testCannotCreateReservedTagsDoneOrAll() {
+		TodoService service = new TodoService();
+		service.addTodo("X");
+
+		assertThat(service.addTagIfNew("Done")).isFalse();
+		assertThat(service.addTagIfNew("ALL")).isFalse();
+
+		assertThat(service.addTagToTodo(0, new Tag("Done"))).isFalse();
+		assertThat(service.addTagToTodo(0, new Tag("All"))).isFalse();
+
+		assertThat(service.getAllTags()).doesNotContain("done");
+		assertThat(service.getAllTags()).doesNotContain("all");
+	}
 
 	@Test
 	void testMarkDoneOutOfBounds() {
@@ -245,15 +260,5 @@ public class TodoServiceTest {
 		assertThat(service.addTagToTodo(5, new Tag("tag"))).isFalse();    
 	}
 
-
-	//nao fez diferença
-	@Test
-	void testFilteringWithTagNameCloseToDone() {
-		TodoService service = new TodoService();
-		service.addTodo("Task1");
-		service.markDone(0);
-
-		var filtered = service.getTodosFilteredByTag("done ");
-		assertThat(filtered).isEmpty(); 
-	}
+	
 }
