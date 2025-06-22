@@ -116,7 +116,28 @@ public class AppTest {
 		window.radioButton("radioTag_Done").click();
 		window.button("deleteTagButton").click();
 	}
-	
+
+	@Test @GUITest
+	void testRemoveTagButtonNotRemoveAllOrDoneMultipleTags() {
+		window.textBox("inputField").enterText("One");
+		window.button("actionButton").click();
+		window.textBox("inputField").enterText("Two");
+		window.button("actionButton").click();
+		
+		JLabel label = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
+		window.robot().click(label);
+		window.button("taskTagButton-0").click();
+		window.menuItemWithPath("Mark as Done").click();
+		
+		window.radioButton("radioTag_All").click();
+		window.button("deleteTagButton").click();
+		window.radioButton("radioTag_Done").click();
+		window.button("deleteTagButton").click();
+		
+		JLabel doneLabel = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
+		Assertions.assertTrue(doneLabel.getText().contains("✔"));
+	}
+
 	@Test @GUITest
 	void testControlInitialStates() {
 		window.textBox("inputField").requireEnabled();
@@ -145,7 +166,7 @@ public class AppTest {
 
 	@Test @GUITest
 	void testWhitespaceInputDisablesButton() {
-		window.textBox("inputField").setText("   ");
+		window.textBox("inputField").setText("	");
 		window.button("actionButton").requireDisabled();
 	}
 	
