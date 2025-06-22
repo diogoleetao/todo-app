@@ -216,7 +216,9 @@ class AppTest {
 				field.setAccessible(true);
 				field.set(null, true);
 				App.getCurrentFrame().repaint();
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+				// intentionally ignored to simulate isTagMode = true without GUI interaction
+			}
 		});
 
 		window.textBox("inputField").setText("ghosttag");

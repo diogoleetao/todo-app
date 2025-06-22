@@ -5,7 +5,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TagTest {
+class TagTest {
 
 	@Test
 	void testTagCreation() {
@@ -30,8 +30,8 @@ public class TagTest {
 	@Test
 	void testEqualsHandlesNullAndWrongType() {
 		Tag tag = new Tag("tag");
-		assertNotEquals(tag, null);
-		assertNotEquals(tag, "notTag");
+		assertNotEquals(null, tag);
+		assertNotEquals("notTag", tag);
 	}
 
 	@Test

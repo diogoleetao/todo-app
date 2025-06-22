@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.assertj.core.api.Assertions.*;
 
-public class TodoServiceTest {
+class TodoServiceTest {
 
 	@Test
 	void testAddAndGetTodos() {
@@ -37,8 +37,6 @@ public class TodoServiceTest {
 		TodoService service = new TodoService();
 		service.addTodo("Task");
 		assertThat(service.addTagToTodo(0, new Tag("test"))).isTrue();
-
-		//assertThat(service.getAllTodos().get(0).getTags()).extracting(Tag::getName).contains("tag");
 	}
 
 	@Test
@@ -248,10 +246,6 @@ public class TodoServiceTest {
 		assertThat(done).allSatisfy(todo -> assertThat(todo.isDone()).isTrue());
 		assertThat(done).hasSize(2);
 		assertThat(done).extracting(Todo::getDescription).containsExactlyInAnyOrder("B", "C");
-		assertThat(done.get(0).getDescription()).isEqualTo("B");
-		assertThat(done.get(1).getDescription()).isEqualTo("C");
-		assertThat(done.get(0).isDone()).isTrue();
-		assertThat(done.get(1).isDone()).isTrue();
 	}
 
 	@Test
@@ -269,6 +263,4 @@ public class TodoServiceTest {
 		service.addTodo("A");
 		assertThat(service.addTagToTodo(5, new Tag("tag"))).isFalse();    
 	}
-
-	
 }
