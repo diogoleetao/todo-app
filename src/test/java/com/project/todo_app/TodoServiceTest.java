@@ -243,6 +243,7 @@ class TodoServiceTest {
 		assertThat(service.getAllTodos().get(2).isDone()).isTrue();
 
 		var done = service.getTodosFilteredByTag("Done");
+		assertThat(done).isNotEmpty();
 		assertThat(done).allSatisfy(todo -> assertThat(todo.isDone()).isTrue());
 	}
 	
