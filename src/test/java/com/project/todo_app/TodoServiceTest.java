@@ -113,6 +113,7 @@ public class TodoServiceTest {
 		TodoService service = new TodoService();
 		service.addTodo("A");
 		service.markDone(99);
+		service.markDone(-1);
 		assertThat(service.getAllTodos().get(0).isDone()).isFalse();
 	}
 
@@ -124,6 +125,15 @@ public class TodoServiceTest {
 		service.markDone(size);
 		assertThat(service.getAllTodos().get(0).isDone()).isFalse();
 	}
+
+	@Test
+	void testAddTagOutOfBounds() {
+		TodoService service = new TodoService();
+		service.addTodo("A");
+		assertThat(service.addTagToTodo(99, new Tag("tag"))).isFalse();
+		assertThat(service.addTagToTodo(-1, new Tag("tag"))).isFalse();
+	}
+
 
 	@Test
 	void testAddTagAtSizeIndexReturnsFalse() {

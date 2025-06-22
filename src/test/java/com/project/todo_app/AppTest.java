@@ -148,6 +148,13 @@ public class AppTest {
 		window.textBox("inputField").setText("   ");
 		window.button("actionButton").requireDisabled();
 	}
+	
+	@Test
+	void testAddEmptyTextDoesNothing() {
+		window.textBox("inputField").setText("   ");
+		window.button("actionButton").click();
+		Assertions.assertEquals(0, window.panel("taskListPanel").target().getComponentCount());
+	}
 
 	@Test @GUITest
 	void testNoTagAddedIfTextEmptyInTagMode() {
@@ -162,7 +169,7 @@ public class AppTest {
 		window.textBox("inputField").setText("   ");
 		window.button("actionButton").click();
 
-		Assertions.assertEquals(2, window.panel("tagPanel").target().getComponentCount() - 2); // -2 = label + deleteBtn
+		Assertions.assertEquals(2, window.panel("tagPanel").target().getComponentCount() - 2);
 	}
 
 	@Test @GUITest

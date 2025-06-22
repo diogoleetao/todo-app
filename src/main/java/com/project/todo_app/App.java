@@ -222,7 +222,7 @@ public class App {
 		tagPanel.add(doneBtn);
 
 		for (String tag : todoService.getAllTags()) {
-			if ("Done".equalsIgnoreCase(tag)) continue;
+			//if ("Done".equalsIgnoreCase(tag)) continue;
 
 			JRadioButton tagBtn = new JRadioButton(tag);
 			tagBtn.setSelected(tag.equals(currentFilterTag));
