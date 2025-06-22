@@ -30,9 +30,4 @@ jobs:
         restore-keys: ${{ runner.os }}-sonar
 
     - name: SonarCloud Scan
-      uses: SonarSource/sonarcloud-github-action@v2
-      with:
-        organization: diogoleetao
-        projectKey: diogoleetao_todo-app
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: mvn sonar:sonar -Dsonar.organization=diogoleetao -Dsonar.projectKey=diogoleetao_todo-app -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
