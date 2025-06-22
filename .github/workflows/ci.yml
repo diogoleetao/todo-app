@@ -21,3 +21,18 @@ jobs:
       
     - name: Coveralls GitHub Action
       uses: coverallsapp/github-action@v2.3.6
+      
+    - name: Cache SonarCloud packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.sonar/cache
+        key: ${{ runner.os }}-sonar
+        restore-keys: ${{ runner.os }}-sonar
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@v2
+      with:
+        organization: diogoleetao
+        projectKey: diogoleetao_todo-app
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

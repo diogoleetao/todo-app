@@ -18,6 +18,7 @@
 	<maven.compiler.source>17</maven.compiler.source>
 	<maven.compiler.target>17</maven.compiler.target>
 	<sonar.organization>diogoleetao</sonar.organization>
+	<sonar.projectKey>diogoleetao_todo-app</sonar.projectKey>
 	<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 </properties>
 
@@ -53,6 +54,34 @@
 		<version>4.2.0</version>
 		<scope>test</scope>
 	</dependency>
+	
+	<!-- Testcontainers  -->
+	<dependency>
+		<groupId>org.testcontainers</groupId>
+		<artifactId>testcontainers</artifactId>
+		<version>1.20.4</version>
+	<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.testcontainers</groupId>
+		<artifactId>junit-jupiter</artifactId>
+		<version>1.20.4</version>
+		<scope>test</scope>
+	</dependency>
+	
+	<!-- PostgreSQL Container -->
+	<dependency>
+		<groupId>org.testcontainers</groupId>
+		<artifactId>postgresql</artifactId>
+		<version>1.20.4</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.postgresql</groupId>
+		<artifactId>postgresql</artifactId>
+		<version>42.7.3</version>
+		<scope>test</scope>
+	</dependency>
 </dependencies>
 
 <build>
@@ -62,6 +91,49 @@
 			<groupId>org.apache.maven.plugins</groupId>
 			<artifactId>maven-surefire-plugin</artifactId>
 			<version>3.2.5</version>
+		</plugin>
+
+		<!-- Run integration tests during verify -->
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-failsafe-plugin</artifactId>
+			<version>3.1.2</version>
+			<executions>
+				<execution>
+					<goals>
+						<goal>integration-test</goal>
+						<goal>verify</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
+
+		<!-- Build Helper -->
+		<plugin>
+			<groupId>org.codehaus.mojo</groupId>
+			<artifactId>build-helper-maven-plugin</artifactId>
+			<version>3.6.0</version>
+			<executions>
+				<execution>
+					<id>add-test-source</id>
+					<phase>generate-test-sources</phase>
+					<goals>
+						<goal>add-test-source</goal>
+					</goals>
+					<configuration>
+						<sources>
+							<source>src/it/java</source>
+						</sources>
+					</configuration>
+				</execution>
+			</executions>
+		</plugin>
+
+		<!-- SonarCloud -->
+		<plugin>
+			<groupId>org.sonarsource.scanner.maven</groupId>
+			<artifactId>sonar-maven-plugin</artifactId>
+			<version>3.10.0.2594</version>
 		</plugin>
 
 		<!-- JaCoCo for Code Coverage -->

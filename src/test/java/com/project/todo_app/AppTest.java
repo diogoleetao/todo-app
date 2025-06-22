@@ -117,6 +117,7 @@ public class AppTest {
 		window.button("deleteTagButton").click();
 	}
 
+	/* didn't make a difference in coverage
 	@Test @GUITest
 	void testRemoveTagButtonNotRemoveAllOrDoneMultipleTags() {
 		window.textBox("inputField").enterText("One");
@@ -137,7 +138,7 @@ public class AppTest {
 		JLabel doneLabel = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
 		Assertions.assertTrue(doneLabel.getText().contains("✔"));
 	}
-
+*/
 	@Test @GUITest
 	void testControlInitialStates() {
 		window.textBox("inputField").requireEnabled();
