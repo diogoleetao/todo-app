@@ -176,7 +176,7 @@
 			<version>1.15.2</version>
 			<configuration>
 				<verbose>true</verbose>
-				<timeoutFactor>2</timeoutFactor>
+				<timeoutFactor>4</timeoutFactor>
 				<targetClasses>
 					<param>com.project.todo_app.TodoService</param>
 					<param>com.project.todo_app.Todo</param>
@@ -196,7 +196,7 @@
 				<mutationThreshold>100</mutationThreshold>
 				<threads>2</threads>
 				<jvmArgs>
-					<jvmArg>-Xmx4096m</jvmArg>
+					<jvmArg>-Xmx8192m</jvmArg>
 				</jvmArgs>
 			</configuration>
 			<dependencies>
