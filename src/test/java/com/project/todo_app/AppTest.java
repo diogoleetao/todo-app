@@ -1,6 +1,7 @@
 package com.project.todo_app;
 
 import org.assertj.swing.edt.FailOnThreadViolationRepaintManager;
+
 import org.assertj.swing.fixture.FrameFixture;
 import org.junit.jupiter.api.*;
 import org.assertj.swing.annotation.GUITest;
@@ -10,6 +11,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import static org.awaitility.Awaitility.await;
 import java.util.concurrent.TimeUnit;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 class AppTest {
 
@@ -316,5 +320,21 @@ class AppTest {
 
 		JLabel label = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(1)).getComponent(0);
 		Assertions.assertTrue(label.getText().toLowerCase().contains("work"));
+	}
+	
+	@Test
+	void testChangedUpdateUnsupported() {
+		DocumentListener listener = new DocumentListener() {
+			void update() {}
+			public void insertUpdate(DocumentEvent e) { update(); }
+			public void removeUpdate(DocumentEvent e) { update(); }
+			public void changedUpdate(DocumentEvent e) {
+				throw new UnsupportedOperationException("Not supported for plain-text fields");
+			}
+		};
+
+		Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+			listener.changedUpdate(null);
+		});
 	}
 }

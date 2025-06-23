@@ -297,4 +297,16 @@ class TodoServiceTest {
 		service.addTodo("A");
 		assertThat(service.addTagToTodo(5, new Tag("tag"))).isFalse();    
 	}
+	
+	@Test
+	void testDoneFilterOnlyReturnsMarked() {
+		TodoService service = new TodoService();
+		service.addTodo("A");
+		service.addTodo("B");
+		service.markDone(1);
+
+		var done = service.getTodosFilteredByTag("Done");
+		assertThat(done).hasSize(1);
+		assertThat(done).extracting(Todo::getDescription).contains("B");
+	}
 }
