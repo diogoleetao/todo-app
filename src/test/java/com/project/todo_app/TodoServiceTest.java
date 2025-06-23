@@ -313,7 +313,6 @@ class TodoServiceTest {
 		Tag tag1 = new Tag("urgent");
 		Tag tag2 = new Tag("URGENT");
 
-		assertThat(tag1).isEqualTo(tag2);
-		assertThat(tag1).hasSameHashCodeAs(tag2);
+		assertThat(tag1).isEqualTo(tag2).hasSameHashCodeAs(tag2);
 	}
 }

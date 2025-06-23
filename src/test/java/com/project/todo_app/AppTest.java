@@ -8,6 +8,7 @@ import org.assertj.swing.annotation.GUITest;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.event.MouseEvent;
 import static org.awaitility.Awaitility.await;
 import java.util.concurrent.TimeUnit;
@@ -225,7 +226,9 @@ class AppTest {
 		window.textBox("inputField").setText("ghosttag");
 		window.button("actionButton").click();
 
+		window.panel("taskListPanel").requireVisible();
 		Assertions.assertEquals(2, window.panel("tagPanel").target().getComponentCount() - 2);
+		Assertions.assertTrue(window.panel("taskListPanel").target().getComponentCount() == 0);
 	}
 
 	@Test @GUITest
@@ -304,7 +307,6 @@ class AppTest {
 		await().atMost(2, TimeUnit.SECONDS).until(() -> window.menuItem("menuNewTag").target().isShowing());
 		window.menuItem("menuNewTag").click();
 
-		
 		window.textBox("inputField").enterText("work");
 		window.button("actionButton").click();
 
@@ -323,5 +325,13 @@ class AppTest {
 
 		JLabel label = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(1)).getComponent(0);
 		Assertions.assertTrue(label.getText().toLowerCase().contains("work"));
+	}
+	
+	@Test @GUITest
+	void testKeyReleaseTriggersButtonUpdate() {
+		Assertions.assertFalse(window.button("actionButton").target().isEnabled());
+		window.textBox("inputField").enterText("T"); 
+		window.textBox("inputField").pressAndReleaseKeys(KeyEvent.VK_BACK_SPACE); 
+		Assertions.assertFalse(window.button("actionButton").target().isEnabled());
 	}
 }
