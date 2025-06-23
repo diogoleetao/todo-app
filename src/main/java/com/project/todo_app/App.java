@@ -64,7 +64,6 @@ public class App {
 
 		actionButton.addActionListener(e -> {
 			String text = inputField.getText().trim();
-			//if (text.isEmpty()) return;
 
 			if (isTagMode) {
 				boolean success = todoService.addTagIfNew(text);

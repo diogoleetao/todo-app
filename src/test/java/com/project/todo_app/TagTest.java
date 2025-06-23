@@ -36,14 +36,20 @@ class TagTest {
 	@Test
 	void testEqualsHandlesNull() {
 		Tag tag = new Tag("tag");
-		//assertNotEquals(tag, null);
-		assertFalse(tag.equals(null));
+		assertNotEquals(null, tag);
 	}
-
+	
 	@Test
 	void testEqualsWithSameObject() {
 		Tag tag = new Tag("repeat");
 		assertEquals(tag, tag);
+	}
+	
+	@Test
+	void testEqualsWithDifferentObjectType() {
+		Tag tag = new Tag("abc");
+		Object notATag = new Object();
+		assertNotEquals(tag, notATag);
 	}
 
 	@Test
