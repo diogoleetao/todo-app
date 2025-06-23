@@ -1,8 +1,8 @@
 package com.project.todo_app;
 
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+//import javax.swing.event.DocumentEvent;
+//import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
@@ -72,6 +72,7 @@ public class App {
 					isTagMode = false;
 					actionButton.setText(ADD_TASK_LABEL);
 					inputField.setText("");
+					updateActionButtonState();
 					actionButton.setEnabled(false);
 					return;
 				}
@@ -82,11 +83,13 @@ public class App {
 				isTagMode = false;
 				actionButton.setText(ADD_TASK_LABEL);
 				updateTagPanel();
+				updateActionButtonState();
 			} else {
 				boolean success = todoService.addTodo(text);
 				if (!success) {
 					JOptionPane.showMessageDialog(frame, "Task already exists.", "Error", JOptionPane.ERROR_MESSAGE);
 					inputField.setText("");
+					updateActionButtonState();
 					actionButton.setEnabled(false);
 					return;
 				}
@@ -97,17 +100,13 @@ public class App {
 
 			inputField.setText("");
 			actionButton.setEnabled(false);
+			updateActionButtonState();
 		});
 
-		inputField.getDocument().addDocumentListener(new DocumentListener() {
-			void update() {
-				actionButton.setEnabled(!inputField.getText().trim().isEmpty());
-			}
-
-			public void insertUpdate(DocumentEvent e) { update(); }
-			public void removeUpdate(DocumentEvent e) { update(); }
-			public void changedUpdate(DocumentEvent e) {
-				throw new UnsupportedOperationException("Not supported for plain-text fields");
+		inputField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				updateActionButtonState();
 			}
 		});
 
@@ -115,11 +114,17 @@ public class App {
 		frame.setVisible(true);
 	}
 
+	static void updateActionButtonState() {
+		actionButton.setEnabled(!inputField.getText().trim().isEmpty());
+	}
+	
 	public static void resetAppState() {
 		todoService.reset();
 		currentFilterTag = "All";
 		updateTodoList();
 		updateTagPanel();
+		updateActionButtonState();
+		isTagMode = false;
 	}
 
 	private static void updateTodoList() {
@@ -156,6 +161,7 @@ public class App {
 					tagTargetIndex = index;
 					actionButton.setText("Add Tag");
 					inputField.requestFocus();
+					updateActionButtonState();
 				});
 				menu.add(createNew);
 

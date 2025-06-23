@@ -54,7 +54,7 @@ class AppTest {
 		window.button("taskTagButton-0").click();
 		window.menuItem("menuNewTag").click();
 
-		window.textBox("inputField").setText("groceries");
+		window.textBox("inputField").enterText("groceries");
 		window.button("actionButton").click();
 
 		JLabel updatelabel = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
@@ -63,7 +63,7 @@ class AppTest {
 		window.button("taskTagButton-0").click();
 		window.menuItem("menuNewTag").click();
 
-		window.textBox("inputField").setText("groceries");
+		window.textBox("inputField").enterText("groceries");
 		window.button("actionButton").click();
 
 		window.dialog().requireVisible().requireModal().requireEnabled();
@@ -238,7 +238,7 @@ class AppTest {
 		window.button("taskTagButton-0").click();
 		window.menuItem("menuNewTag").click();
 
-		window.textBox("inputField").setText("done"); 
+		window.textBox("inputField").enterText("done"); 
 		window.button("actionButton").click();
 
 		Assertions.assertThrows(Exception.class, () -> window.radioButton("radioTag_done"));
@@ -272,7 +272,7 @@ class AppTest {
 		window.button("taskTagButton-" + index).click();
 		window.menuItem("menuNewTag").click();
 
-		window.textBox("inputField").setText("urgent");
+		window.textBox("inputField").enterText("urgent");
 		window.button("actionButton").click();
 
 		window.radioButton("radioTag_urgent").click();
@@ -292,18 +292,23 @@ class AppTest {
 		window.textBox("inputField").enterText("Task 1");
 		window.button("actionButton").click();
 
+		await().atMost(3, TimeUnit.SECONDS).until(() ->
+		window.panel("taskListPanel").target().getComponentCount() >= 1
+		);
+		
 		JLabel label1 = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
 		window.robot().click(label1);
 
 		window.button("taskTagButton-0").click();
 
-		await().atMost(2, TimeUnit.SECONDS).until(() -> window.menuItem("menuNewTag").target().isShowing());      
+		await().atMost(2, TimeUnit.SECONDS).until(() -> window.menuItem("menuNewTag").target().isShowing());
 		window.menuItem("menuNewTag").click();
 
-		window.textBox("inputField").setText("work");
+		
+		window.textBox("inputField").enterText("work");
 		window.button("actionButton").click();
 
-		window.textBox("inputField").setText("Task 2");
+		window.textBox("inputField").enterText("Task 2");
 		window.button("actionButton").click();
 
 		JLabel label2 = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(1)).getComponent(0);
