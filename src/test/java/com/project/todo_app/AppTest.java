@@ -185,28 +185,28 @@ class AppTest {
 		window.textBox("inputField").enterText("Buy bread");
 		window.button("actionButton").click();
 
-		int taskCount = window.panel("taskListPanel").target().getComponentCount();
-		int lastIndex = taskCount - 1;
-
-		JPanel taskPanel = (JPanel) window.panel("taskListPanel").target().getComponent(lastIndex);
+		JPanel taskPanel = window.panel("taskListPanel").panel("taskPanel-" + 0).target();
 		JLabel label = (JLabel) taskPanel.getComponent(0);
+		JButton tagButton = (JButton) taskPanel.getComponent(1);
 
 		window.robot().click(label);
 
-		JButton tagButton = (JButton) taskPanel.getComponent(1);
 		await().atMost(1, TimeUnit.SECONDS).until(tagButton::isVisible);
 
-		window.button("taskTagButton-" + lastIndex).click();
+		window.button("taskTagButton-" + 0).click();
 		window.menuItem("menuNewTag").click();
-
+		
+		window.button("actionButton").requireText("Add Tag");
+		
 		window.textBox("inputField").enterText("groceries");
 		window.button("actionButton").click();
 
 		await().atMost(1, TimeUnit.SECONDS).until(() -> {
 			JLabel updatedLabel = (JLabel) ((JPanel) window.panel("taskListPanel").target()
-					.getComponent(lastIndex)).getComponent(0);
-			return updatedLabel.getText().toLowerCase().contains("groceries");
+					.getComponent(0)).getComponent(0);
+			return updatedLabel.getText().toLowerCase().contains("[groceries]");
 		});
+		window.radioButton("radioTag_groceries").requireVisible();
 	}
 
 	
@@ -217,7 +217,10 @@ class AppTest {
 				var field = App.class.getDeclaredField("isTagMode");
 				field.setAccessible(true);
 				field.set(null, true);
-			} catch (Exception ignored) {}
+			} catch (Exception ignored) {
+				// intentionally ignored to simulate isTagMode = true without GUI interaction
+
+			}
 		});
 
 		window.textBox("inputField").enterText("ghost");
@@ -339,9 +342,7 @@ class AppTest {
 		JLabel label = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(1)).getComponent(0);
 		Assertions.assertTrue(label.getText().toLowerCase().contains("work"));
 	}
-	
 
-	
 	@Test @GUITest
 	void testKeyReleasedTriggersUpdateActionButtonState() {
 		window.textBox("inputField").click();
@@ -353,4 +354,15 @@ class AppTest {
 		Assertions.assertFalse(window.button("actionButton").target().isEnabled());
 	}
 
+	@Test @GUITest
+	void testKeyReleasedWithEmptyFieldMaintainsDisabledButton() {
+		window.textBox("inputField").setText("");
+		window.button("actionButton").requireDisabled();
+
+		window.textBox("inputField").click();
+		window.robot().pressAndReleaseKeys(KeyEvent.VK_SHIFT); 
+
+		window.button("actionButton").requireDisabled();
+		Assertions.assertFalse(window.button("actionButton").target().isEnabled());
+	}
 }
