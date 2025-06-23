@@ -228,25 +228,10 @@ class TodoServiceTest {
 		assertThat(service.getAllTodos().get(1).hasTag("remove")).isFalse();
 		assertThat(service.getAllTodos().get(1).hasTag("keep")).isTrue();
 		assertThat(service.getAllTodos().get(2).hasTag("remove")).isFalse();
+		
+		assertThat(service.getAllTags()).contains("keep");
 	}
 
-	@Test
-	void testDoneFilter() {
-		TodoService service = new TodoService();
-		service.addTodo("A");
-		service.addTodo("B");
-		service.addTodo("C");
-		service.markDone(1);
-		service.markDone(2);
-
-		assertThat(service.getAllTodos().get(0).isDone()).isFalse();
-		assertThat(service.getAllTodos().get(1).isDone()).isTrue();
-		assertThat(service.getAllTodos().get(2).isDone()).isTrue();
-
-		var done = service.getTodosFilteredByTag("Done");
-		assertThat(done).isNotEmpty().allSatisfy(todo -> assertThat(todo.isDone()).isTrue());
-	}
-	
 	@Test
 	void testDoneFilterCorrectSize() {
 		TodoService service = new TodoService();
@@ -314,5 +299,21 @@ class TodoServiceTest {
 		Tag tag2 = new Tag("URGENT");
 
 		assertThat(tag1).isEqualTo(tag2).hasSameHashCodeAs(tag2);
+	}
+	
+	@Test
+	void testFilterByDoneFindsDoneTodoWithoutDoneTag() {
+		TodoService service = new TodoService();
+		service.addTodo("A task to be done");
+		service.markDone(0);
+		
+		assertThat(service.getAllTodos().get(0).isDone()).isTrue();
+
+		var doneTodos = service.getTodosFilteredByTag("Done");
+		assertThat(doneTodos).as("Should find the task marked done").hasSize(1);
+		assertThat(doneTodos.get(0).getDescription()).as("Should be the correct task").isEqualTo("A task to be done");
+		assertThat(doneTodos).hasSize(1);
+		assertThat(doneTodos.get(0).getDescription()).isEqualTo("A task to be done");
+		assertThat(doneTodos.get(0).hasTag("Done")).as("Task should NOT have a 'Done' tag").isFalse();
 	}
 }

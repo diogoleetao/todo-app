@@ -1,20 +1,20 @@
 package com.project.todo_app;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
+@Testcontainers
 public class PostgresIntegrationIT {
 
-	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15");
+	@Container
+	static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
 
-	@BeforeAll
-	public static void startContainer() {
-		postgres.start();
-	}
 
 	@Test
 	void testPostgresContainerRuns() {
 		Assertions.assertTrue(postgres.isRunning());
 	}
 }
-

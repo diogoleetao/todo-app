@@ -175,6 +175,8 @@
 			<artifactId>pitest-maven</artifactId>
 			<version>1.15.2</version>
 			<configuration>
+				<verbose>true</verbose>
+				<timeoutFactor>2</timeoutFactor>
 				<targetClasses>
 					<param>com.project.todo_app.TodoService</param>
 					<param>com.project.todo_app.Todo</param>
@@ -192,8 +194,9 @@
 					<mutator>DEFAULTS</mutator>
 				</mutators>
 				<mutationThreshold>100</mutationThreshold>
+				<threads>2</threads>
 				<jvmArgs>
-					<jvmArg>-Xmx2048m</jvmArg>
+					<jvmArg>-Xmx4096m</jvmArg>
 				</jvmArgs>
 			</configuration>
 			<dependencies>

@@ -24,7 +24,6 @@ public class Todo {
 
 	public void markDone() {
 		this.done = true;
-		this.tags.add(new Tag("Done"));
 	}
 
 	public boolean addTag(Tag tag) {

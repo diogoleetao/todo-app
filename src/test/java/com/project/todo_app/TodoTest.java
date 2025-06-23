@@ -17,7 +17,6 @@ class TodoTest {
 		Todo todo = new Todo("Write tests");
 		todo.markDone();
 		assertTrue(todo.isDone());
-		assertTrue(todo.hasTag("Done"));
 	}
 
 	@Test
