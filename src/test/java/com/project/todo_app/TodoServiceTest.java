@@ -244,8 +244,7 @@ class TodoServiceTest {
 		assertThat(service.getAllTodos().get(2).isDone()).isTrue();
 
 		var done = service.getTodosFilteredByTag("Done");
-		assertThat(done).isNotEmpty();
-		assertThat(done).allSatisfy(todo -> assertThat(todo.isDone()).isTrue());
+		assertThat(done).isNotEmpty().allSatisfy(todo -> assertThat(todo.isDone()).isTrue());;
 	}
 	
 	@Test
@@ -306,7 +305,15 @@ class TodoServiceTest {
 		service.markDone(1);
 
 		var done = service.getTodosFilteredByTag("Done");
-		assertThat(done).hasSize(1);
-		assertThat(done).extracting(Todo::getDescription).contains("B");
+		assertThat(done).hasSize(1).extracting(Todo::getDescription).contains("B");;
+	}
+	
+	@Test
+	void testTagEqualityIgnoreCase() {
+		Tag tag1 = new Tag("urgent");
+		Tag tag2 = new Tag("URGENT");
+
+		assertThat(tag1).isEqualTo(tag2);
+		assertThat(tag1.hashCode()).isEqualTo(tag2.hashCode());
 	}
 }

@@ -243,12 +243,10 @@ public class App {
 		deleteTagButton.setName("deleteTagButton");
 		deleteTagButton.setEnabled(false);
 		deleteTagButton.addActionListener(e -> {
-			if (!"All".equals(currentFilterTag) && !"Done".equals(currentFilterTag)) {
-				todoService.removeTagFromAll(currentFilterTag);
-				currentFilterTag = "All";
-				updateTodoList();
-				updateTagPanel();
-			}
+					todoService.removeTagFromAll(currentFilterTag);
+					currentFilterTag = "All";
+					updateTodoList();
+					updateTagPanel();
 		});
 
 		tagPanel.add(deleteTagButton);

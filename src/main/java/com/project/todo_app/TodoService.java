@@ -24,7 +24,7 @@ public class TodoService {
 
 	public List<Todo> getTodosFilteredByTag(String tagName) {
 		if (tagName.equals("All")) return getAllTodos();
-		if (tagName.equals("Done")) {
+		else if (tagName.equals("Done")) {
 			return todos.stream().filter(Todo::isDone).toList();
 		}
 		return todos.stream().filter(todo -> todo.hasTag(tagName)).toList();	

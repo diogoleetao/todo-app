@@ -30,13 +30,14 @@ class TagTest {
 	@Test
 	void testEqualsHandlesWrongType() {
 		Tag tag = new Tag("tag");
-		assertNotEquals(tag,"notTag");
+		assertNotEquals("notTag", tag);
 	}
 	
 	@Test
 	void testEqualsHandlesNull() {
 		Tag tag = new Tag("tag");
-		assertNotEquals(tag, null);
+		//assertNotEquals(tag, null);
+		assertFalse(tag.equals(null));
 	}
 
 	@Test
