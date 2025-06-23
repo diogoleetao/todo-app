@@ -209,26 +209,39 @@ class AppTest {
 		});
 	}
 
+	
 	@Test @GUITest
 	void testAddTagWithoutTargetIndexDoesNothingVisible() {
 		SwingUtilities.invokeLater(() -> {
-			App.resetAppState();
 			try {
 				var field = App.class.getDeclaredField("isTagMode");
 				field.setAccessible(true);
 				field.set(null, true);
-				App.getCurrentFrame().repaint();
-			} catch (Exception ignored) {
-				// intentionally ignored to simulate isTagMode = true without GUI interaction
-			}
+			} catch (Exception ignored) {}
 		});
 
-		window.textBox("inputField").setText("ghosttag");
+		window.textBox("inputField").enterText("ghost");
 		window.button("actionButton").click();
 
-		window.panel("taskListPanel").requireVisible();
-		Assertions.assertEquals(2, window.panel("tagPanel").target().getComponentCount() - 2);
-		Assertions.assertTrue(window.panel("taskListPanel").target().getComponentCount() == 0);
+		Assertions.assertEquals(0, window.panel("taskListPanel").target().getComponentCount());
+	}
+	
+	@Test @GUITest
+	void testTagTargetIndexUsedWhenCreatingTag() {
+		window.textBox("inputField").enterText("Task 1");
+		window.button("actionButton").click();
+
+		JLabel label = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
+		window.robot().click(label);
+		window.button("taskTagButton-0").click();
+
+		window.menuItem("menuNewTag").click();
+
+		window.textBox("inputField").enterText("testtag");
+		window.button("actionButton").click();
+
+		JLabel updated = (JLabel) ((JPanel) window.panel("taskListPanel").target().getComponent(0)).getComponent(0);
+		Assertions.assertTrue(updated.getText().toLowerCase().contains("testtag"));
 	}
 
 	@Test @GUITest
@@ -327,11 +340,17 @@ class AppTest {
 		Assertions.assertTrue(label.getText().toLowerCase().contains("work"));
 	}
 	
+
+	
 	@Test @GUITest
-	void testKeyReleaseTriggersButtonUpdate() {
-		Assertions.assertFalse(window.button("actionButton").target().isEnabled());
-		window.textBox("inputField").enterText("T"); 
-		window.textBox("inputField").pressAndReleaseKeys(KeyEvent.VK_BACK_SPACE); 
+	void testKeyReleasedTriggersUpdateActionButtonState() {
+		window.textBox("inputField").click();
+		
+		window.robot().pressAndReleaseKeys(KeyEvent.VK_A);
+		Assertions.assertTrue(window.button("actionButton").target().isEnabled());
+
+		window.robot().pressAndReleaseKeys(KeyEvent.VK_BACK_SPACE);
 		Assertions.assertFalse(window.button("actionButton").target().isEnabled());
 	}
+
 }

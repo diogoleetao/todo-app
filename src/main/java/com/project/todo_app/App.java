@@ -12,7 +12,7 @@ public class App {
 	private static JButton actionButton;
 	private static JPanel tagPanel;
 	private static boolean isTagMode = false;
-	private static int tagTargetIndex = -1;
+	private static Integer tagTargetIndex = null;
 	private static String currentFilterTag = "All";
 	private static JButton deleteTagButton;
 
@@ -72,9 +72,9 @@ public class App {
 					inputField.setText("");
 					updateActionButtonState();
 					actionButton.setEnabled(false);
-					return;
+					return; 
 				}
-				if (tagTargetIndex != -1) {
+				if (tagTargetIndex != null) {
 					todoService.addTagToTodo(tagTargetIndex, new Tag(text));
 					updateTodoList();
 				}
@@ -123,6 +123,7 @@ public class App {
 		updateTagPanel();
 		updateActionButtonState();
 		isTagMode = false;
+		tagTargetIndex = null;
 	}
 
 	private static void updateTodoList() {
