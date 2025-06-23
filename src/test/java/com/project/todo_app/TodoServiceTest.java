@@ -187,7 +187,7 @@ class TodoServiceTest {
 
 		assertThat(service.getAllTags()).isEmpty();
 		assertThat(service.getAllTodos()).isEmpty();
-		assertThat(service.getAllTags().contains("urgent")).isFalse();
+		assertThat(service.getAllTags()).doesNotContain("urgent");
 	}
 
 	@Test
